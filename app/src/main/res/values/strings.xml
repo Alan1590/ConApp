@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">ConApp</string>
+    <string name="title_activity_nuevo_usuario">Nuevo Usuario</string>
+</resources>
