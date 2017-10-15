@@ -19,4 +19,14 @@ public class nuevo_usuarioActivity extends AppCompatActivity {
         baseDatos.TrabajoBaseDatos();
     }
 
+    private void crearUsuario(){
+
+
+    }
+
+    private boolean validacion(){
+
+        return false;
+    }
+
 }

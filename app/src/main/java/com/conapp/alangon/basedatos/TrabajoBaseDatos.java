@@ -11,13 +11,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class TrabajoBaseDatos {
+public class
+TrabajoBaseDatos {
 
     public void TrabajoBaseDatos(){
         sqlConect.start();
-
-
-
         }
 
     Thread sqlConect = new Thread() {
@@ -29,18 +27,21 @@ public class TrabajoBaseDatos {
                 Connection conn = DriverManager.getConnection(
                         "jdbc:postgresql://192.168.0.244:5432/conapp", "odoo", "odoo1590");
                 //En el stsql se puede agregar cualquier consulta SQL deseada.
-                String stsql = "Select version()";
+                String stsql = "INSERT INTO public.user (user_name,user_email,user_telephone,user_address,user_user,user_password) " +
+                        "VALUES ('alan','alan',15424,'adsasdas','adsad','adasd12')";
                 Statement st = conn.createStatement();
-                ResultSet rs = st.executeQuery(stsql);
-                rs.next();
-                Log.d("CONESIONXCASDASD",rs.getString(1));
+                st.executeUpdate(stsql);
                 conn.close();
 
             } catch (SQLException se) {
-                System.out.println("oops! No se puede conectar. Error: " + se.toString());
+                Log.e("ERRR",se.getMessage());
             } catch (ClassNotFoundException e) {
-                System.out.println("oops! No se encuentra la clase. Error: " + e.getMessage());
+                Log.e("ERRR",e.getMessage());
             }
         }
     };
+
+    private int idUsaurio(){
+        return 0;
+    }
 }
