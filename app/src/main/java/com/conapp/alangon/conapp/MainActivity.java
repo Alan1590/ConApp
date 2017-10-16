@@ -1,5 +1,6 @@
 package com.conapp.alangon.conapp;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final Button buton_logeo = (Button) findViewById(R.id.button_aceptar);
+        final Button buton_logeo = (Button) findViewById(R.id.buttonMain_aceptar);
         buton_logeo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -23,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-
     }
 
     protected void logeo(String user, String password){

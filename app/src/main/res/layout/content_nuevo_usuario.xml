@@ -14,7 +14,7 @@
         android:orientation="vertical">
 
         <EditText
-            android:id="@+id/editTextNombre"
+            android:id="@+id/editTextAgregarUsuario_Nombre"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
@@ -24,7 +24,16 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editTextEmail"
+            android:id="@+id/editTextAgregarUsuario_Telefono"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:ems="10"
+            android:hint="Teléfono"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/editTextAgregarUsuario_Email"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
@@ -33,17 +42,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editTextTelefono"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="20dp"
-            android:ems="10"
-            android:hint="Teléfono"
-            android:inputType="textPersonName"
-            android:phoneNumber="true" />
-
-        <EditText
-            android:id="@+id/editTextDireccion"
+            android:id="@+id/editTextAgregarUsuario_Direccion"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
@@ -52,7 +51,7 @@
             android:inputType="textPersonName" />
 
         <EditText
-            android:id="@+id/editText19"
+            android:id="@+id/editTextAgregarUsuario_User"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
@@ -63,7 +62,7 @@
             android:scrollbars="horizontal|vertical" />
 
         <EditText
-            android:id="@+id/editText20"
+            android:id="@+id/editTextAgregarUsuario_Password"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
@@ -73,16 +72,17 @@
             android:password="true" />
 
         <EditText
-            android:id="@+id/editText21"
+            android:id="@+id/editTextAgregarUsuario_RepetirPassword"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginBottom="20dp"
             android:ems="10"
             android:hint="Repetir Password"
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:password="true" />
 
         <Button
-            android:id="@+id/buttonFinalizar"
+            android:id="@+id/buttonAgregarUsuario_Finalizar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Finalizar" />
