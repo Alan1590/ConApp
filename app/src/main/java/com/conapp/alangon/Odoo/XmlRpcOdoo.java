@@ -63,7 +63,7 @@ public class XmlRpcOdoo {
 
             }
         };
-        client.callAsync(listener, "execute_kw","prod_v8",1,"rf52*/rf","res.partner","search",
+        client.callAsync(listener, "execute_kw","bd",1,"pss","res.partner","search",
                 Arrays.asList(Arrays.asList(
                         Arrays.asList("is_company", "=", true),
                         Arrays.asList("customer", "=", true))));
