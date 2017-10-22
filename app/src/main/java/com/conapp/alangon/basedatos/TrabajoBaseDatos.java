@@ -19,17 +19,17 @@ import android.telephony.TelephonyManager;
 
 public class
 TrabajoBaseDatos {
-    private String nombre;
-    private String email;
-    private String telefono;
-    private String direccion;
-    private String usuario;
-    private String pass;
+    private CharSequence nombre="";
+    private CharSequence email="";
+    private CharSequence telefono="";
+    private CharSequence direccion="";
+    private CharSequence usuario="";
+    private CharSequence pass="";
     private Connection conn;
     private PreparedStatement st;
     private ResultSet result;
 
-    public void datosUsuario(String nombre,String email,String telefono,String direccion,String usuario,String pass){
+    public void datosUsuario(CharSequence nombre,CharSequence email,CharSequence telefono,CharSequence direccion,CharSequence usuario,CharSequence pass){
         this.nombre = nombre;
         this.email = email;
         this.telefono = telefono;
@@ -70,14 +70,14 @@ TrabajoBaseDatos {
 
                 st = conn.prepareStatement("Insert into public.user (user_name,user_email,user_address,user_user," +
                     "user_password,user_idodoo,user_ctasoftguard,user_telephone,user_imei,user_habilitado) values(?,?,?,?,?,?,?,?,?,?)");
-                st.setString(1,nombre);
-                st.setString(2,email);
-                st.setString(3,direccion);
-                st.setString(4,usuario);
-                st.setString(5,pass);
+                st.setString(1,nombre.toString());
+                st.setString(2,email.toString());
+                st.setString(3,direccion.toString());
+                st.setString(4,usuario.toString());
+                st.setString(5,pass.toString());
                 st.setInt(6,0);
                 st.setInt(7,0);
-                st.setString(8,telefono);
+                st.setString(8,telefono.toString());
                 st.setString(9,"");
                 st.setBoolean(10,false);
                 st.execute();
