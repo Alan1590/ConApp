@@ -37,7 +37,7 @@ TrabajoBaseDatos {
         this.usuario = usuario;
         this.pass = pass;
         sqlCrearUsuario.start();
-
+        Log.e("ASDASD","ASD");
     }
 
     public TrabajoBaseDatos() {
