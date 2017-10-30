@@ -51,7 +51,7 @@ TrabajoBaseDatos {
                 // "jdbc:postgresql://IP:PUERTO/DB", "USER", "PASSWORD");
 
                 conn = DriverManager.getConnection(
-                        "jdbc:postgresql://192.168.0.244:5432/conapp", "odoo", "odoo1590");
+                        "jdbc:postgresql://mvbox.ddns.net:5432/conapp", "conapp", "conapp");
                 Log.e("Conexion",conn.getClientInfo().toString());
                 interrupt();
             } catch (SQLException se) {
@@ -70,7 +70,7 @@ TrabajoBaseDatos {
 
                 st = conn.prepareStatement("Insert into public.user (user_name,user_email,user_address,user_user," +
                     "user_password,user_idodoo,user_ctasoftguard,user_telephone,user_imei,user_habilitado) values(?,?,?,?,?,?,?,?,?,?)");
-                st.setString(1,nombre.toString());
+                st.setObject(1,nombre.toString());
                 st.setString(2,email.toString());
                 st.setString(3,direccion.toString());
                 st.setString(4,usuario.toString());
