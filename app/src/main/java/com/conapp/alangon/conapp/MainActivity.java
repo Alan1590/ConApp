@@ -1,10 +1,13 @@
 package com.conapp.alangon.conapp;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -32,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("HAFSFASF");
         builder.show();
         builder.create();
+
     }
 
     public void registrarNuevoUsuario(View v){
