@@ -2,6 +2,7 @@ package com.conapp.alangon.conapp;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Telephony;
@@ -17,17 +18,14 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.conapp.alangon.basedatos.TrabajoBaseDatos;
-
+import com.conapp.alangon.personalizaciones.ClaseErrores;
+//CLASE PARA LA CREACION DE UN NUEVO USUARIO
 public class nuevo_usuarioActivity extends AppCompatActivity {
     private TrabajoBaseDatos baseDatos;
-    private TextView txt_nombre;
-    private TextView txt_email;
-    private TextView txt_telefono;
-    private TextView txt_direccion;
-    private TextView txt_usuario;
-    private TextView txt_password;
-    private TextView txt_checkpassword;
+    private TextView txt_nombre,txt_email,txt_telefono,txt_direccion,txt_usuario,txt_password,txt_checkpassword;
+    private boolean validacionCampos, validacionPassword, validacionImei;
 
+    private ClaseErrores msjErrores;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,8 +38,8 @@ public class nuevo_usuarioActivity extends AppCompatActivity {
         txt_password = (TextView) findViewById(R.id.editTextAgregarUsuario_Password);
         txt_checkpassword = (TextView) findViewById(R.id.editTextAgregarUsuario_RepetirPassword);
         Button btnFinalizar =(Button) findViewById(R.id.buttonAgregarUsuario_Finalizar);
-        baseDatos = new TrabajoBaseDatos();
-
+        baseDatos = new TrabajoBaseDatos(this);
+        msjErrores = new ClaseErrores(this);
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,15 +51,15 @@ public class nuevo_usuarioActivity extends AppCompatActivity {
 
     /**
      * Funcion para agregar usuario en la base de datos postgresql
-     *
+     * Chequeo de 3 validaciones para poder crearse el usuario:
+     * - Todos los campos requeridos completos
+     * - Los password 1 y 2 coinciden
+     * - El imei no existe en la base de datos
      */
     private void crearUsuario(){
         Boolean camposCompletos = validacionCampos();
 
-        if(camposCompletos) {
-            Boolean passAceptado = validacionPassword(txt_password.getText().toString(), txt_checkpassword.getText().toString());
-            String idDevice = getIdDispositivo();
-            if (passAceptado) {
+        if(validacionCreacion()) {
                 baseDatos.datosUsuario(
                         txt_nombre.getText().toString(),
                         txt_email.getText().toString(),
@@ -69,7 +67,7 @@ public class nuevo_usuarioActivity extends AppCompatActivity {
                         txt_direccion.getText().toString(),
                         txt_usuario.getText().toString(),
                         txt_password.getText().toString(),
-                        idDevice
+                        getDeviceId()
 
                 );
 
@@ -87,25 +85,16 @@ public class nuevo_usuarioActivity extends AppCompatActivity {
 
                     }
                 }).create().show();
-            }
-        }
-    }
-
-    private boolean validacionPassword(String pass1, String pass2){
-        boolean coincidePass=false;
-         if(pass1.equals(pass2) ){
-                coincidePass = true;
-            }else{
-                AlertDialog.Builder errorPass = new AlertDialog.Builder(this);
-                errorPass.setTitle("Error").setMessage("No coinciden los Password").create().show();
-                txt_password.setText("");
-                txt_checkpassword.setText("");
-                coincidePass = false;
 
             }
-      return coincidePass;
+
     }
 
+    //PASO VALIDACION 1
+    /**
+     * Funcion que chequea que los campos necesarios esten completos sino lo estan devuelve un mensaje de advertencia y se marcan los campos obligatorios
+     * @return
+     */
     private boolean validacionCampos(){
         boolean camposVacios = txt_nombre.getText().toString().isEmpty() || txt_telefono.getText().toString().isEmpty()
                 || txt_password.getText().toString().isEmpty() || txt_checkpassword.getText().toString().isEmpty() || txt_usuario.getText().toString().isEmpty();
@@ -123,20 +112,77 @@ public class nuevo_usuarioActivity extends AppCompatActivity {
             }).create().show();
             return false;
         }else{
+            validacionCampos = true;
+            validacionPassword(txt_password.getText().toString(),txt_checkpassword.getText().toString());
             return true;
         }
     }
 
 
-    private String getIdDispositivo(){
-        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String idDevice="";
-        try{
-            idDevice = tm.getDeviceId();
-        }catch (SecurityException e){
-            Log.d("ASDASD","ER"+e.getMessage());
+    //PASO 2 VALIDACION
+    /**
+     * Funcion que corrobora si el pass1 y 2 son iguales si los son devuelve TRUE
+     * @param pass1
+     * @param pass2
+     * @return
+     */
+    private boolean validacionPassword(String pass1, String pass2){
+        boolean coincidePass=false;
+        if(pass1.equals(pass2) ){
+            coincidePass = true;
+            validacionPassword = true;
+            getDeviceId();
+        }else{
+            msjErrores.mensajeError("Error", "No coinciden los Password");
+            txt_password.setText("");
+            txt_checkpassword.setText("");
+            coincidePass = false;
         }
-        return  idDevice;
+        return coincidePass;
+    }
+
+
+    /**
+     * Funcion para obtener el imei del dispositivo
+     * @return
+     */
+
+    private String getDeviceId(){
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        String deviceId="";
+        try{
+            deviceId = tm.getDeviceId();
+            validacionIsNuevoUsuarioImei();
+        }catch (SecurityException e){
+            msjErrores.mensajeError("Error", e.getMessage());
+        }
+        return deviceId;
+    }
+
+    /**
+     * Funcion para verificar si el usuario que se quiere registrar ya existe en la base de datos
+     * @return
+     */
+    private boolean validacionIsNuevoUsuarioImei(){
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        boolean isNuevoUsuario=true;
+        try{
+            baseDatos.isNuevoUsuario(tm.getDeviceId());
+            validacionImei = isNuevoUsuario;
+        }catch (SecurityException e){
+            msjErrores.mensajeError("Error", e.getMessage());
+        }
+        return  isNuevoUsuario;
+    }
+
+    private boolean validacionCreacion(){
+        boolean crearUsuario = false;
+        if(validacionImei && validacionPassword && validacionCampos){
+            crearUsuario = true;
+        }else{
+            crearUsuario =false;
+        }
+        return crearUsuario;
     }
 
 }

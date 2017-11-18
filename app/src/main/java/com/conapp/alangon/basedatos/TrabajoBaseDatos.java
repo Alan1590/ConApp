@@ -17,6 +17,8 @@ import java.util.ArrayList;
 
 import android.telephony.TelephonyManager;
 
+import com.conapp.alangon.personalizaciones.ClaseErrores;
+
 public class
 TrabajoBaseDatos {
     private String nombre;
@@ -31,11 +33,35 @@ TrabajoBaseDatos {
     private ResultSet result;
     private boolean usuarioCreado;
     private boolean conexionExitosa;
+    private boolean nuevoUsuario;
+    private String errores;
+    private ClaseErrores mjsError;
 
+    public void setNuevoUsuario(boolean nuevoUsuario) {
+        this.nuevoUsuario = nuevoUsuario;
+    }
+
+    public boolean isNuevoUsuario() {
+
+        return nuevoUsuario;
+    }
+
+    public String getErrores() {
+        return errores;
+    }
+
+    /**
+     * Devuelve si el usuario fue creado o no
+     * @return
+     */
     public boolean isUsuarioCreado() {
         return usuarioCreado;
     }
 
+    /**
+     * Devuelve si la conexion con el servidor se logro, unicamente servidor Postgres
+     * @return
+     */
     public boolean isConexionExitosa() {
         return conexionExitosa;
     }
@@ -52,10 +78,14 @@ TrabajoBaseDatos {
 
     }
 
-    public TrabajoBaseDatos() {
+    public TrabajoBaseDatos(Context ctx) {
+        mjsError = new ClaseErrores(ctx);
         sqlConect.start();
     }
 
+    /**
+     * Conectar la base de datos de Postgresql
+     */
     Thread sqlConect = new Thread() {
         public void run() {
             try {
@@ -63,7 +93,7 @@ TrabajoBaseDatos {
                 // "jdbc:postgresql://IP:PUERTO/DB", "USER", "PASSWORD");
 
                 conn = DriverManager.getConnection(
-                        "jdbc:postgresql://192.168.0.20/conapp", "talento", "talento3546");
+                        "jdbc:postgresql://192.168.0.20/conapp", "conapp", "C0n@pp#2017AWG");
                 interrupt();
                 conexionExitosa = true;
             } catch (SQLException se) {
@@ -81,6 +111,9 @@ TrabajoBaseDatos {
         return false;
     }
 
+    /**
+     * Creacion de usuarios en la base de datos Postgres
+     */
     Thread sqlCrearUsuario = new Thread(){
         public void run(){
             try{
@@ -99,30 +132,53 @@ TrabajoBaseDatos {
                 st.setBoolean(10,false);
                 st.execute();
                 usuarioCreado = true;
-                interrupt();
-            }catch (SQLException sqlE){
-                interrupt();
+                join();
+
+            }catch (InterruptedException | SQLException sqlE){
+
                 Log.e("ERRRRRRRR",sqlE.getMessage());
                 usuarioCreado=false;
             }
         }
     };
 
+    /**
+     * Mediante el IMEI chequea si el dispositivo ya existe en la base de datos
+     */
+    public void isNuevoUsuario(String myIdDevice){
+        deviceId = myIdDevice;
+        if(!sqlCorroborarUsuario.isAlive()){
+            sqlCorroborarUsuario.start();
+        }
+    }
+
     Thread sqlCorroborarUsuario = new Thread(){
-        public  void run(){
-            try{
-                st = conn.prepareStatement("Select * from public.users where user_imei = ?");
-                st.setString(1,"359931070334522");
-                result = st.executeQuery();
-                while(result.next()){
-                    Log.e("IMEI", result.getString(2));
-                }
+        @Override
+        public  void run() {
 
-            }catch(SQLException eq){
-
-            }
+            isNuevoUsuario();
         }
 
+        public void isNuevoUsuario(){
+            byte numeroResultados;
+            try {
+                st = conn.prepareStatement("Select * from public.users where user_imei = ?");
+                st.setString(1, deviceId);
+                result = st.executeQuery();
+
+                numeroResultados = (byte)result.getRow();
+                if(numeroResultados==0){
+                    setNuevoUsuario(true);
+                }else{
+                    setNuevoUsuario(false);
+                }
+                join();
+            } catch (InterruptedException | SQLException eq) {
+
+
+            }
+
+        }
     };
 
     private int idUsaurio(){
