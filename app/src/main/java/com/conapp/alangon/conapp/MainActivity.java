@@ -1,13 +1,16 @@
 package com.conapp.alangon.conapp;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-
+import com.conapp.alangon.conapp.Nuevo_usuarioActivity;
 import com.conapp.alangon.Odoo.XmlRpcOdoo;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,13 +35,14 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle("HAFSFASF");
         builder.show();
         builder.create();
+
     }
 
     public void registrarNuevoUsuario(View v){
         XmlRpcOdoo odoo = new XmlRpcOdoo();
         odoo.conectar();
 
-        Intent intNuevoUsuario = new Intent(this,nuevo_usuarioActivity.class);
+        Intent intNuevoUsuario = new Intent(this,Nuevo_usuarioActivity.class);
         startActivity(intNuevoUsuario);
     }
     }

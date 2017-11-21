@@ -1,30 +1,33 @@
 package com.conapp.alangon.conapp;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
 import com.conapp.alangon.basedatos.TrabajoBaseDatos;
+import com.conapp.alangon.personalizaciones.ClaseDialogos;
+import com.conapp.alangon.validacion.ValidacionCreacionUsuario;
 
-public class nuevo_usuarioActivity extends AppCompatActivity {
+
+//CLASE PARA LA CREACION DE UN NUEVO USUARIO
+public class Nuevo_usuarioActivity extends AppCompatActivity {
+    private TextView txt_nombre,txt_email,txt_telefono,txt_direccion,txt_usuario,txt_password,txt_checkpassword;
+    private boolean esnuevo;
+    private ClaseDialogos msjDialogos;
     private TrabajoBaseDatos baseDatos;
-    TextView txt_nombre;
-    TextView txt_email;
-    TextView txt_telefono;
-    TextView txt_direccion;
-    TextView txt_usuario;
-    TextView txt_password;
-    TextView txt_checkpassword;
+    public  void setEsnuevo(boolean esnuevo) {
+        this.esnuevo = esnuevo;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,111 +40,127 @@ public class nuevo_usuarioActivity extends AppCompatActivity {
         txt_password = (TextView) findViewById(R.id.editTextAgregarUsuario_Password);
         txt_checkpassword = (TextView) findViewById(R.id.editTextAgregarUsuario_RepetirPassword);
         Button btnFinalizar =(Button) findViewById(R.id.buttonAgregarUsuario_Finalizar);
-        baseDatos = new TrabajoBaseDatos();
-
+        msjDialogos = new ClaseDialogos(this);
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
-                crearUsuario(view);
+                validacionCampos();
             }
         });
 
     }
 
-    private void crearUsuario(View v){
-        Boolean isCreado = crearUsuario(
-                txt_nombre.getText().toString(),
-                txt_email.getText().toString(),
-                txt_telefono.getText().toString(),
-                txt_direccion.getText().toString(),
-                txt_usuario.getText().toString(),
-                txt_password.getText().toString(),
-                txt_checkpassword.getText().toString()
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Log.e("Estooo","Estoy en pause");
+    }
 
-        );
-        if(isCreado){
-            AlertDialog.Builder crearUsuario = new AlertDialog.Builder(nuevo_usuarioActivity.this);
-            crearUsuario.setTitle("Info").setMessage("El usuario se creó con éxito");
-            crearUsuario.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+    //PASO VALIDACION 1
+    /**
+     * Funcion que chequea que los campos necesarios esten completos sino lo estan devuelve un mensaje de advertencia y se marcan los campos obligatorios
+     * @return
+     */
+    private boolean validacionCampos(){
+        boolean camposVacios = txt_nombre.getText().toString().isEmpty() || txt_telefono.getText().toString().isEmpty()
+                || txt_password.getText().toString().isEmpty() || txt_checkpassword.getText().toString().isEmpty() || txt_usuario.getText().toString().isEmpty();
+        if(camposVacios) {
+            AlertDialog.Builder errorPass = new AlertDialog.Builder(this);
+            errorPass.setTitle("Error").setMessage("Los campos marcados son obligatorios").setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intMain = new Intent(nuevo_usuarioActivity.this,MainActivity.class);
-                    startActivity(intMain);
-
+                    txt_nombre.setBackgroundColor(Color.CYAN);
+                    txt_telefono.setBackgroundColor(Color.CYAN);
+                    txt_password.setBackgroundColor(Color.CYAN);
+                    txt_checkpassword.setBackgroundColor(Color.CYAN);
+                    txt_usuario.setBackgroundColor(Color.CYAN);
                 }
             }).create().show();
+            return false;
         }else{
-            AlertDialog.Builder errorAlCrearUsuario = new AlertDialog.Builder(nuevo_usuarioActivity.this);
-            errorAlCrearUsuario.setTitle("Info").setMessage("No se puede crear el usuario");
-            errorAlCrearUsuario.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                }
-            }).create().show();
+            ValidacionCreacionUsuario.setValidacionCampos(true);
+            validacionPassword(txt_password.getText().toString(),txt_checkpassword.getText().toString());
+            return true;
         }
+    }
 
+
+    //PASO 2 VALIDACION
+    /**
+     * Funcion que corrobora si el pass1 y 2 son iguales si los son devuelve TRUE
+     * @param pass1
+     * @param pass2
+     * @return
+     */
+    private boolean validacionPassword(String pass1, String pass2){
+        boolean coincidePass=false;
+        if(pass1.equals(pass2) ){
+            coincidePass = true;
+            ValidacionCreacionUsuario.setValidacionPassword(true);
+            validacionIsNuevoUsuarioImei();
+        }else{
+            msjDialogos.mensajeError("Error", "No coinciden los Password");
+            txt_password.setText("");
+            txt_checkpassword.setText("");
+            coincidePass = false;
+        }
+        return coincidePass;
+    }
+
+
+
+    /**
+     * VALIDACION PASO 3
+     * Funcion para verificar si el usuario que se quiere registrar ya existe en la base de datos
+     * @return
+     */
+    private void validacionIsNuevoUsuarioImei(){
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        baseDatos = new TrabajoBaseDatos(this);
+
+        try{
+            baseDatos.setAccion(1);
+            baseDatos.execute(tm.getDeviceId());
+        }catch (SecurityException e){
+            msjDialogos.mensajeError("Error", e.getMessage());
+        }
+    }
+
+    private void validacionCreacion(String deviceId){
+            crearUsuario(deviceId);
     }
 
     /**
      * Funcion para agregar usuario en la base de datos postgresql
-     *
+     * Chequeo de 3 validaciones para poder crearse el usuario:
+     * - Todos los campos requeridos completos
+     * - Los password 1 y 2 coinciden
+     * - El imei no existe en la base de datos
      */
-    private Boolean crearUsuario(String nombre, String email, String telefono, String direccion, String user, String pass, String checkPass){
-        Boolean passAceptado = this.validacionPassword(pass, checkPass);
-        Boolean validacionCampos = this.validacionCampos(nombre,telefono,user,pass,checkPass);
-        if(passAceptado & validacionCampos){
-            baseDatos.datosUsuario(
-                    nombre,
-                    email,
-                    telefono,
-                    direccion,
-                    user,
-                    pass
-            );
-            return true;
-        }else{
-            return false;
-        }
+    public void crearUsuario(String deviceId){
+        String[] datosUsuario = new String[7];
+        baseDatos = new TrabajoBaseDatos(this);
+        datosUsuario[0] = txt_nombre.getText().toString();
+        datosUsuario[1] = txt_email.getText().toString();
+        datosUsuario[2] = txt_direccion.getText().toString();
+        datosUsuario[3] = txt_usuario.getText().toString();
+        datosUsuario[4] = txt_password.getText().toString();
+        datosUsuario[5] = txt_telefono.getText().toString();
+        datosUsuario[6] = deviceId;
+        baseDatos.setAccion(0);
+        baseDatos.execute(datosUsuario);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Usuario");
+        builder.setMessage("Usuario creado con éxito").setPositiveButton("Ok",new DialogInterface.OnClickListener(){
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        }).create().show();
+
 
     }
-
-    private boolean validacionPassword(String pass1, String pass2){
-        if(pass1.equals(pass2)){
-
-            return true;
-        }else{
-            AlertDialog.Builder errorPass = new AlertDialog.Builder(this);
-            errorPass.setTitle("Error").setMessage("No coinciden los Password").create().show();
-            txt_password.setText("");
-            txt_checkpassword.setText("");
-            return false;
-        }
-    }
-
-    private boolean validacionCampos(String campoNombre, String campoTelefono,
-                                     String campoUsuario, String campoPass, String campoPassCheck){
-        if(campoNombre.isEmpty() || campoTelefono.isEmpty() ||
-                campoUsuario.isEmpty() || campoPass.isEmpty() || campoPassCheck.isEmpty()){
-            AlertDialog.Builder errorValidarCampos = new AlertDialog.Builder(nuevo_usuarioActivity.this);
-            errorValidarCampos.setTitle("Info").setMessage("Los campos marcados con celeste son obligatorios");
-            errorValidarCampos.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    txt_nombre.setBackgroundColor(getResources().getColor(R.color.celeste_campos));
-                    txt_telefono.setBackgroundColor(getResources().getColor(R.color.celeste_campos));
-                    txt_usuario.setBackgroundColor(getResources().getColor(R.color.celeste_campos));
-                    txt_password.setBackgroundColor(getResources().getColor(R.color.celeste_campos));
-                    txt_checkpassword.setBackgroundColor(getResources().getColor(R.color.celeste_campos));
-                }
-            }).create().show();
-            return false;
-        }else{
-            return true;
-        }
-
-    }
-
 
 
 }
