@@ -1,7 +1,11 @@
 package com.conapp.alangon.validacion;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+
+import com.conapp.alangon.personalizaciones.ClaseErrores;
 
 /**
  * Created by Alan Gon on 22/11/2017.
@@ -10,6 +14,12 @@ import android.util.Log;
 public class ValidacionesNuevoUsuario {
     private boolean validacionPassword, validacionCampos, validacionNuevoUsuario, validacionLongitudPass;
     private String largoPassword;
+    private Context ctx;
+    private ClaseErrores msjDialogo;
+    public ValidacionesNuevoUsuario(Context ctx) {
+        this.ctx = ctx;
+        msjDialogo = new ClaseErrores(ctx);
+    }
 
     public boolean isValidacionLongitudPass() {
         return validacionLongitudPass;
@@ -43,12 +53,16 @@ public class ValidacionesNuevoUsuario {
         this.validacionNuevoUsuario = validacionNuevoUsuario;
     }
 
+    private void existeUsuario(){
+        if(!validacionNuevoUsuario){
+            msjDialogo.mensajeError("Error","Este usuario ya esta registrado en el sistema");
+        }
+    }
 
     public boolean validacionLongitudPassword(Context ctx, String password){
         boolean validacionLongitudPass;
         if(password.toCharArray().length > 10){
             validacionLongitudPass=true;
-            Log.e("ERRRR",String.valueOf(validacionLongitudPass));
         }else{
             validacionLongitudPass=false;
         }

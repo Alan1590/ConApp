@@ -40,7 +40,7 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
         txt_checkpassword = (TextView) findViewById(R.id.editTextAgregarUsuario_RepetirPassword);
         Button btnFinalizar =(Button) findViewById(R.id.buttonAgregarUsuario_Finalizar);
         msjErrores = new ClaseErrores(this);
-        validacionesNuevoUsuario = new ValidacionesNuevoUsuario();
+        validacionesNuevoUsuario = new ValidacionesNuevoUsuario(this);
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,7 +124,6 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
      * Funcion para obtener el imei del dispositivo
      * @return
      */
-
     private String getDeviceId() {
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String deviceId = "";
@@ -135,6 +134,7 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
             baseDatos.setValidacionesNuevoUsuario(validacionesNuevoUsuario);
             baseDatos.setAccion(1);
             baseDatos.execute(tm.getDeviceId());
+
         }catch (SecurityException e){
             msjErrores.mensajeError("Error", e.getMessage());
         }
@@ -182,6 +182,8 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
                 }
             }).create().show();
 
+        }else{
+            Log.e("ASDASDADSSADcxc","acasdasfgge4we");
         }
 
     }

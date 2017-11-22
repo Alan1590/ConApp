@@ -98,10 +98,10 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
      */
     @Override
     protected void onPostExecute(Boolean result) {
-        if (validacionesNuevoUsuario.isValidacionNuevoUsuario()) {
+        if (validacionesNuevoUsuario.isValidacionNuevoUsuario() && accion == 1) {
             nuevo_usuarioActivity.crearUsuario(deviceId);
-        }else{
-            mjsError.mensajeError("Error", "Este dispositivo ya esta registrado en el sistema");
+        }else if(!validacionesNuevoUsuario.isValidacionNuevoUsuario()  && accion == 1) {
+            mjsError.mensajeError("Error","El usuario ya se encuentra registrado");
         }
     }
 
@@ -145,7 +145,6 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
             st.setBoolean(10, false);
             st.execute();
             validacionesNuevoUsuario.setValidacionNuevoUsuario(false);
-            hayFallas = true;
         } catch (SQLException sqlE) {
             hayFallas = true;
         }
