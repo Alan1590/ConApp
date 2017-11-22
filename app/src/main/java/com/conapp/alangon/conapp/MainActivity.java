@@ -10,7 +10,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import com.conapp.alangon.conapp.Nuevo_usuarioActivity;
+
 import com.conapp.alangon.Odoo.XmlRpcOdoo;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,8 +39,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void registrarNuevoUsuario(View v){
-        XmlRpcOdoo odoo = new XmlRpcOdoo();
-        odoo.conectar();
+
 
         Intent intNuevoUsuario = new Intent(this,Nuevo_usuarioActivity.class);
         startActivity(intNuevoUsuario);

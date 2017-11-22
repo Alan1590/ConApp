@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.conapp.alangon.conapp.nuevo_usuarioActivity"
+    tools:context="com.conapp.alangon.conapp.Nuevo_usuarioActivity"
     tools:showIn="@layout/activity_nuevo_usuario">
 
     <LinearLayout
