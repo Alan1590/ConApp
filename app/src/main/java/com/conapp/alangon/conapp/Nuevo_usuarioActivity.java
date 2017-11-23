@@ -17,8 +17,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.conapp.alangon.basedatos.TrabajoBaseDatos;
-import com.conapp.alangon.personalizaciones.ClaseErrores;
+import com.conapp.alangon.basedatos.TrabajoBaseDatosRegistroUsuario;
+import com.conapp.alangon.personalizaciones.ClaseDialogos;
 import com.conapp.alangon.validacion.ValidacionesNuevoUsuario;
 
 //CLASE PARA LA CREACION DE UN NUEVO USUARIO
@@ -26,7 +26,7 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
     private TextView txt_nombre,txt_email,txt_telefono,txt_direccion,txt_usuario,txt_password,txt_checkpassword;
     private ValidacionesNuevoUsuario validacionesNuevoUsuario;
 
-    private ClaseErrores msjErrores;
+    private ClaseDialogos msjErrores;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,7 +39,7 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
         txt_password = (TextView) findViewById(R.id.editTextAgregarUsuario_Password);
         txt_checkpassword = (TextView) findViewById(R.id.editTextAgregarUsuario_RepetirPassword);
         Button btnFinalizar =(Button) findViewById(R.id.buttonAgregarUsuario_Finalizar);
-        msjErrores = new ClaseErrores(this);
+        msjErrores = new ClaseDialogos(this);
         validacionesNuevoUsuario = new ValidacionesNuevoUsuario(this);
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,7 +127,7 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
     private String getDeviceId() {
         TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         String deviceId = "";
-        TrabajoBaseDatos baseDatos = new TrabajoBaseDatos(this);
+        TrabajoBaseDatosRegistroUsuario baseDatos = new TrabajoBaseDatosRegistroUsuario(this);
         try{
             deviceId = tm.getDeviceId();
             baseDatos.setNuevo_usuarioActivity(this);
@@ -150,7 +150,7 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
      * - El imei no existe en la base de datos
      */
     public void crearUsuario(String deviceId){
-        TrabajoBaseDatos baseDatos = new TrabajoBaseDatos(this);
+        TrabajoBaseDatosRegistroUsuario baseDatos = new TrabajoBaseDatosRegistroUsuario(this);
         if (validacionesNuevoUsuario.permitirCrearUsuario()) {
 
             String[] datosUsuario = new String[7];
@@ -182,8 +182,6 @@ public class Nuevo_usuarioActivity extends AppCompatActivity {
                 }
             }).create().show();
 
-        }else{
-            Log.e("ASDASDADSSADcxc","acasdasfgge4we");
         }
 
     }

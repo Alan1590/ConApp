@@ -5,6 +5,7 @@ package com.conapp.alangon.basedatos;
  */
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.provider.Telephony;
@@ -21,11 +22,11 @@ import java.util.ArrayList;
 import android.telephony.TelephonyManager;
 
 import com.conapp.alangon.conapp.Nuevo_usuarioActivity;
-import com.conapp.alangon.personalizaciones.ClaseErrores;
+import com.conapp.alangon.personalizaciones.ClaseDialogos;
 import com.conapp.alangon.validacion.ValidacionesNuevoUsuario;
 
 public class
-TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
+TrabajoBaseDatosRegistroUsuario extends AsyncTask<String, String, Boolean> {
     private Connection conn;
     private PreparedStatement st;
     private ResultSet result;
@@ -33,10 +34,10 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
     private boolean hayFallas;
     private String errores, deviceId;
     private int accion;
-    private ClaseErrores mjsError;
+    private ClaseDialogos mjsError;
     private Nuevo_usuarioActivity nuevo_usuarioActivity;
     private ValidacionesNuevoUsuario validacionesNuevoUsuario;
-
+    private Context context;
     /**
      * Seteo del tipo de accion a realizar
      * 0 - Para la creacion de usuarios
@@ -66,10 +67,14 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
      *
      * @param ctx
      */
-    public TrabajoBaseDatos(Context ctx) {
-        mjsError = new ClaseErrores(ctx);
+    public TrabajoBaseDatosRegistroUsuario(Context ctx) {
+        this.context = ctx;
     }
 
+    @Override
+    protected void onPreExecute(){
+        mjsError = new ClaseDialogos(context);
+    }
     /**
      * Funcion que se ejecuta en segundo plano en el que dependiendo de la accion va a ejecutar una tarea especifica
      *
@@ -84,6 +89,7 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
                 crearUsuario(strings);
                 break;
             case (1):
+                publishProgress(strings);
                 getDeviceId(strings[0]);
                 break;
         }
@@ -98,11 +104,20 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
      */
     @Override
     protected void onPostExecute(Boolean result) {
-        if (validacionesNuevoUsuario.isValidacionNuevoUsuario() && accion == 1) {
-            nuevo_usuarioActivity.crearUsuario(deviceId);
+        if(hayFallas){
+            mjsError.mensajeError("Error", errores);
+        }else if (validacionesNuevoUsuario.isValidacionNuevoUsuario() && accion == 1) {
+                nuevo_usuarioActivity.crearUsuario(deviceId);
         }else if(!validacionesNuevoUsuario.isValidacionNuevoUsuario()  && accion == 1) {
-            mjsError.mensajeError("Error","El usuario ya se encuentra registrado");
+                mjsError.mensajeError("Error","El usuario ya se encuentra registrado");
         }
+        mjsError.cerrarProgresoDialogo();
+
+    }
+
+    @Override
+    protected void onProgressUpdate(String... progres){
+        mjsError.progresoDialogo("Creando usuario","Aguarde por favor");
     }
 
     /**
@@ -115,10 +130,9 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
 
             conn = DriverManager.getConnection(
                     "jdbc:postgresql://mvbox.ddns.net/conapp", "conapp", "C0n@pp#2017AWG");
-        } catch (SQLException se) {
+        } catch (SQLException | ClassNotFoundException e) {
             hayFallas = true;
-        } catch (ClassNotFoundException e) {
-            hayFallas = true;
+            errores=e.getMessage();
         }
     }
 
@@ -147,6 +161,7 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
             validacionesNuevoUsuario.setValidacionNuevoUsuario(false);
         } catch (SQLException sqlE) {
             hayFallas = true;
+            errores=sqlE.getMessage();
         }
     }
 
@@ -173,6 +188,7 @@ TrabajoBaseDatos extends AsyncTask<String, String, Boolean> {
             }
         } catch (SQLException eq) {
             hayFallas = true;
+            errores=eq.getMessage();
         }
     }
 }

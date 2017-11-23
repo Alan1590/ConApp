@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
 
-import com.conapp.alangon.personalizaciones.ClaseErrores;
+import com.conapp.alangon.personalizaciones.ClaseDialogos;
 
 /**
  * Created by Alan Gon on 22/11/2017.
@@ -15,10 +15,10 @@ public class ValidacionesNuevoUsuario {
     private boolean validacionPassword, validacionCampos, validacionNuevoUsuario, validacionLongitudPass;
     private String largoPassword;
     private Context ctx;
-    private ClaseErrores msjDialogo;
+    private ClaseDialogos msjDialogo;
     public ValidacionesNuevoUsuario(Context ctx) {
         this.ctx = ctx;
-        msjDialogo = new ClaseErrores(ctx);
+        msjDialogo = new ClaseDialogos(ctx);
     }
 
     public boolean isValidacionLongitudPass() {
@@ -61,7 +61,7 @@ public class ValidacionesNuevoUsuario {
 
     public boolean validacionLongitudPassword(Context ctx, String password){
         boolean validacionLongitudPass;
-        if(password.toCharArray().length > 10){
+        if(password.toCharArray().length > 5){
             validacionLongitudPass=true;
         }else{
             validacionLongitudPass=false;

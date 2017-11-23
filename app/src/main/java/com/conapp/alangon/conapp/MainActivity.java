@@ -30,11 +30,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     protected void logeo(String user, String password){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("HOLA");
-        builder.setTitle("HAFSFASF");
-        builder.show();
-        builder.create();
+        Intent intLogeo = new Intent(this, ActividadPrincipal.class);
+        startActivity(intLogeo);
 
     }
 
