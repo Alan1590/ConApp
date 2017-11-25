@@ -23,7 +23,8 @@
             android:name=".Nuevo_usuarioActivity"
             android:label="@string/title_activity_nuevo_usuario"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ActividadPrincipal"></activity>
+        <activity android:name=".ActividadPrincipal" />
+        <activity android:name=".InvoiceActivity" />
     </application>
 
 </manifest>

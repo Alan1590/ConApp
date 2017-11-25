@@ -9,6 +9,6 @@ public class OdooBaseDatosConapp {
     private String urlOdoo;
     private String odooUser;
     private String odooPass;
-
+    private String odooURL;
 
 }

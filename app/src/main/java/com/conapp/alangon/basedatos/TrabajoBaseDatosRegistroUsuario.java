@@ -112,7 +112,6 @@ TrabajoBaseDatosRegistroUsuario extends AsyncTask<String, String, Boolean> {
                 mjsError.mensajeError("Error","El usuario ya se encuentra registrado");
         }
         mjsError.cerrarProgresoDialogo();
-
     }
 
     @Override

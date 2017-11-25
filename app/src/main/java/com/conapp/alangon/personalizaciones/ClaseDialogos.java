@@ -16,10 +16,10 @@ public class ClaseDialogos extends AppCompatActivity {
     private ProgressDialog dialogoProgreso;
     public ClaseDialogos(Context ctx) {
         this.ctx = ctx;
+        dialogoProgreso = new ProgressDialog(ctx);
     }
 
     public void progresoDialogo(String titulo, String mensaje){
-        dialogoProgreso = new ProgressDialog(ctx);
         dialogoProgreso.setTitle(titulo);
         dialogoProgreso.setMessage(mensaje);
         dialogoProgreso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
