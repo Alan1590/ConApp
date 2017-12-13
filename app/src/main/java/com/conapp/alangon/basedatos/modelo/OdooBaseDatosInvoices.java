@@ -6,7 +6,7 @@ package com.conapp.alangon.basedatos.modelo;
 
 public class OdooBaseDatosInvoices {
 
-    String itemNombre;
+    private static String itemNombre;
     String itemFecha;
     int itemMonto;
     boolean itemPagado;

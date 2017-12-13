@@ -3,6 +3,8 @@ package com.conapp.alangon.Odoo;
 import android.util.Log;
 import com.conapp.alangon.Odoo.axmlrpc.*;
 import com.conapp.alangon.Odoo.axmlrpc.serializer.StringSerializer;
+import com.conapp.alangon.basedatos.modelo.OdooBaseDatosInvoices;
+import com.conapp.alangon.conapp.MainActivity;
 
 import java.lang.reflect.Array;
 import java.net.MalformedURLException;
@@ -16,17 +18,56 @@ import java.util.List;
  */
 
 public class XmlRpcOdoo {
-    public void conectar(){
-            //XMLRPCClient login = new XMLRPCClient(new URL("https://adm.marinozzi.com.ar/xmlrpc/2/common"), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
-            //int idCliente = (int) login.callAsync(listener,"login","bd","admin","");
-            //XMLRPCClient client = new XMLRPCClient(new URL("url"), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
-            //LECTURA
-            //String[] listParam = {"read"};
-            //List<String> parametros = Arrays.asList(listParam);
-            //client.callAsync(listener, "execute_kw","bd","uid","pass","model","check_access_rights",parametros);
+    private static String urlServidorOdoo;
+    private static int idUsuarioOdoo;
+    private static String baseDatos;
+    private static String usuario;
+    private static String pass;
+    private XMLRPCClient client;
+    private static XMLRPCCallback listener;
+    private static ArrayList<Object> listRecords;
+
+    public static ArrayList<Object> getListRecords() {
+        return listRecords;
     }
 
+    public ArrayList<Object> getlistRecords() {
+        return listRecords;
+    }
 
+    public static String getBaseDatos() {
+        return baseDatos;
+    }
+
+    public static String getUsuario() {
+        return usuario;
+    }
+
+    public static String getPass() {
+        return pass;
+    }
+
+    public static int getIdUsuarioOdoo() {
+        return idUsuarioOdoo;
+    }
+
+    public static String getUrlServidorOdoo() {
+        return urlServidorOdoo;
+    }
+
+    public XmlRpcOdoo(String urlServidorOdoo, String usuario, String pass, String baseDatos, int idUsuarioOdoo) {
+        this.usuario = usuario;
+        this.pass = pass;
+        this.baseDatos = baseDatos;
+        this.urlServidorOdoo = urlServidorOdoo;
+        this.idUsuarioOdoo = idUsuarioOdoo;
+        try{
+            client = new XMLRPCClient(new URL(urlServidorOdoo), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
+
+        }catch (MalformedURLException urlEx){
+
+        }
+    }
 
     /**
      * Logeo de usuario que esta dado por la base de datos principal
@@ -37,40 +78,51 @@ public class XmlRpcOdoo {
     }
 
     /**
+     * Devuelve un array de ids dependiendo el modelo
+     * @param filtro
+     * @param modelo
+     * @return
+     */
+    public ArrayList<Object> listRecords(String[] filtro, String modelo){
+        listRecords = new ArrayList<>();
+        Thread lecturaBase = new Thread(){
+            @Override
+            public void run(){
+                try {
+                    String[] filtro = new String[]{"phone","=","+54 3492 431017"};
+                    Object[] result = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
+                            "res.partner","search",
+                            Arrays.asList(Arrays.asList(Arrays.asList(filtro))));
+                    listRecords.add(result[0]);
+                    Log.e("ERRRORRRRRR",String.valueOf(result[0]));
+                    join();
+
+                } catch (XMLRPCException e) {
+                    Log.e("ERRRORRRRRR2",String.valueOf(e.getMessage()));
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        };
+        lecturaBase.start();
+        Log.e("ERRRORRRRRR5",String.valueOf(listRecords));
+        return listRecords;
+    }
+
+   /**
      * Funcion que devuelve un array de Objectos segun la consulta que se haga en odoo
      * @param model
      * @param filtro
      * @return
      */
-    private Object[] filtro(String model, Object[] filtro){
+/*    private Object[] filtro(String model, Object[] filtro){
         try{
             XMLRPCClient client = new XMLRPCClient(new URL("url"), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
-            XMLRPCCallback listener = new XMLRPCCallback() {
-            public void onResponse(long id, Object result) {
-                // Handling the servers response
-                Object[] resultF = (Object[]) result;
-                for(int i =0 ; i< resultF.length; i++){
-                    Log.e("RESPUETABIEN", String.valueOf(resultF[i]));
-                }
-            }
-            public void onError(long id, XMLRPCException error) {
-                // Handling any error in the library
-                Log.e("RESPUETAException", error.getMessage());
-            }
-            public void onServerError(long id, XMLRPCServerException error) {
-                // Handling an error response from the server
-                Log.e("RESPUETAServerEx", error.getMessage());
-
-            }
-        };
-        client.callAsync(listener, "execute_kw","bd",1,"pss","res.partner","search",
-                Arrays.asList(Arrays.asList(
-                        Arrays.asList("is_company", "=", true),
-                        Arrays.asList("customer", "=", true))));
-        }catch(MalformedURLException e){
-            Log.e("ASDASDASDASDAS",e.getMessage());
-        }
         return null;
     }
+*/
+
+
 
 }

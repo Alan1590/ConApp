@@ -18,10 +18,19 @@ import com.conapp.alangon.basedatos.TrabajoBaseDatosLogeoUsuario;
 
 import org.w3c.dom.Text;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
     private EditText txt_usuario, txt_password;
+    private String idResult;
+
+    public void setIdResult(String idResult) {
+        this.idResult = idResult;
+        Log.e("HOLAAAA",idResult);
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+        XmlRpcOdoo xmlRpe = new XmlRpcOdoo("https://adm.marinozzi.com.ar/xmlrpc/2/object","admin","rf52*/rf","prod_v8",1);
+        String[] filtro = new String[]{"phone","=","+54 3492 431017"};
+        ArrayList<Object> result = xmlRpe.listRecords(filtro,"res.partner");
+        Log.e("HOLAAAA",String.valueOf(idResult));
     }
 
     protected void logeo(String user, String password){
