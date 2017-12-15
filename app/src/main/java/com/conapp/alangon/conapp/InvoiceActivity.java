@@ -3,6 +3,7 @@ package com.conapp.alangon.conapp;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.AndroidException;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -18,14 +19,22 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class InvoiceActivity extends AppCompatActivity {
+    /*************LISTA VARIABLES******************/
     ListView listView;
     TextView txt_view;
+    private ArrayList<String> listaFacturas = new ArrayList<>();
+    /*************LISTA VARIABLES******************/
 
-    String[] test = {"HOLa","QTES","ADSACVX","asdzxc"};
+    public void agregarResultados(String result){
+        listaFacturas.add(result);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invoice);
+        String[] test = {"HOLa","QTES","ADSACVX","asdzxc"};
+
         listView = (ListView) findViewById(R.id.listViewInvoices);
         VistaListaPersonalizada listaFacturasOdoo = new VistaListaPersonalizada(this,test);
         listView.setAdapter(listaFacturasOdoo);

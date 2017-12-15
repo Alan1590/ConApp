@@ -1,45 +1,123 @@
 package com.conapp.alangon.basedatos.modelo;
 
+import android.app.Activity;
+import android.os.AsyncTask;
+import android.util.Log;
+
+import com.conapp.alangon.Odoo.axmlrpc.XMLRPCCallback;
+import com.conapp.alangon.Odoo.axmlrpc.XMLRPCClient;
+import com.conapp.alangon.Odoo.axmlrpc.XMLRPCException;
+import com.conapp.alangon.conapp.InvoiceActivity;
+import com.conapp.alangon.conapp.MainActivity;
+import com.conapp.alangon.personalizaciones.FiltrosParaOdoo;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+
 /**
  * Created by Alan Gon on 12/12/2017.
  */
 
-public class OdooBaseDatosInvoices {
+public class OdooBaseDatosInvoices extends AsyncTask<String, String, Object[]>{
+    /*************LISTA VARIABLES******************/
+    private XMLRPCClient client;
+    private static final String MODELO_PARTNER = "res.partner";
+    private static final String MODELO_INVOICES = "account.invoice";
+    private static final String MODELO_PAGOS = "account.voucher";
+    private String modelo_seleccionado;
+    private String urlServidorOdoo, baseDatos, usuario, pass;
+    private int idUsuarioOdoo;
+    private ArrayList<String>[] filtros ;
+    private HashMap<String,ArrayList<String>> mapeoCampos;
+    /*************LISTA VARIABLES******************/
 
-    private static String itemNombre;
-    String itemFecha;
-    int itemMonto;
-    boolean itemPagado;
-
-    public String getItemNombre() {
-        return itemNombre;
+    /**
+     * Metodo para seleccionar que modelo es el que se esta trabajando
+     * en odoo
+     * MODELO: 0 - MODELO PARTNER
+     * MODELO: 1 - MODELO PAGOS
+     * MODELO: 2 - MODELO FACTURAS
+     * @param model
+     */
+    public void selectModel(int model){
+        switch(model){
+            case(0):
+                modelo_seleccionado = MODELO_PARTNER;
+                break;
+            case(1):
+                modelo_seleccionado = MODELO_PAGOS;
+                break;
+            case(2):
+                modelo_seleccionado = MODELO_INVOICES;
+                break;
+        }
     }
 
-    public void setItemNombre(String itemNombre) {
-        this.itemNombre = itemNombre;
+    /**
+     * Seteo del mapeo de los campos seleccionados
+     * @param mapeoCampos
+     */
+    public void setMapeoCampos(HashMap<String, ArrayList<String>> mapeoCampos) {
+        this.mapeoCampos = mapeoCampos;
     }
 
-    public String getItemFecha() {
-        return itemFecha;
+    public ArrayList<String>[] getFiltros() {
+        return filtros;
     }
 
-    public void setItemFecha(String itemFecha) {
-        this.itemFecha = itemFecha;
+    /**
+     * Seteo de filtros en forma de ArrayList[]
+     * @param filtros
+     */
+    public void setFiltros(ArrayList<String>[] filtros) {
+        this.filtros = filtros;
+    }
+    private static XMLRPCCallback listener;
+
+    /**
+     * Seteo de datos basicos para el ingreso a Odoo
+     * @param urlServidorOdoo
+     * @param baseDatos
+     * @param usuario
+     * @param pass
+     * @param idUsuarioOdoo
+     */
+    public OdooBaseDatosInvoices(String urlServidorOdoo, String baseDatos, String usuario, String pass, int idUsuarioOdoo) {
+        this.urlServidorOdoo = urlServidorOdoo;
+        this.baseDatos = baseDatos;
+        this.usuario = usuario;
+        this.pass = pass;
+        this.idUsuarioOdoo = idUsuarioOdoo;
     }
 
-    public int getItemMonto() {
-        return itemMonto;
+    @Override
+    protected void onPreExecute() {
+        super.onPreExecute();
     }
 
-    public void setItemMonto(int itemMonto) {
-        this.itemMonto = itemMonto;
+    @Override
+    protected Object[] doInBackground(String... strings) {
+        Object[] result=null;
+        try{
+            client = new XMLRPCClient(new URL(urlServidorOdoo), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
+            result = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
+                modelo_seleccionado,"search_read",
+                Arrays.asList(Arrays.asList(filtros)),mapeoCampos);
+        } catch (XMLRPCException e) {
+            Log.e("ERRRORRRRRR1",String.valueOf(e.getMessage()));
+        } catch (Exception e) {
+            Log.e("ERRRORRRRRR2",String.valueOf(e.getMessage()));        }
+        return result;
+
     }
 
-    public boolean isItemPagado() {
-        return itemPagado;
+    @Override
+    protected void onPostExecute(Object[] objects) {
+        super.onPostExecute(objects);
     }
 
-    public void setItemPagado(boolean itemPagado) {
-        this.itemPagado = itemPagado;
-    }
 }

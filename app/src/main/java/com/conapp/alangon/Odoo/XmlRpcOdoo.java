@@ -84,31 +84,9 @@ public class XmlRpcOdoo {
      * @return
      */
     public ArrayList<Object> listRecords(String[] filtro, String modelo){
-        listRecords = new ArrayList<>();
-        Thread lecturaBase = new Thread(){
-            @Override
-            public void run(){
-                try {
-                    String[] filtro = new String[]{"phone","=","+54 3492 431017"};
-                    Object[] result = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
-                            "res.partner","search",
-                            Arrays.asList(Arrays.asList(Arrays.asList(filtro))));
-                    listRecords.add(result[0]);
-                    Log.e("ERRRORRRRRR",String.valueOf(result[0]));
-                    join();
-
-                } catch (XMLRPCException e) {
-                    Log.e("ERRRORRRRRR2",String.valueOf(e.getMessage()));
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        };
-        lecturaBase.start();
-        Log.e("ERRRORRRRRR5",String.valueOf(listRecords));
-        return listRecords;
+        return null;
     }
+
 
    /**
      * Funcion que devuelve un array de Objectos segun la consulta que se haga en odoo

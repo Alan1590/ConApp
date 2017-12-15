@@ -1,9 +1,7 @@
 package com.conapp.alangon.conapp;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -11,10 +9,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 
-import com.conapp.alangon.Odoo.XmlRpcOdoo;
 import com.conapp.alangon.basedatos.TrabajoBaseDatosLogeoUsuario;
+import com.conapp.alangon.basedatos.modelo.OdooBaseDatosInvoices;
+import com.conapp.alangon.personalizaciones.FiltrosParaOdoo;
 
 import org.w3c.dom.Text;
 
@@ -22,12 +20,15 @@ import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
+    /*************LISTA VARIABLES******************/
     private EditText txt_usuario, txt_password;
     private String idResult;
+    /*************LISTA VARIABLES******************/
 
     public void setIdResult(String idResult) {
         this.idResult = idResult;
-        Log.e("HOLAAAA",idResult);
+        Log.e("RRRRRRRRRRsss",String.valueOf(idResult));
+
 
     }
 
@@ -45,10 +46,28 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-        XmlRpcOdoo xmlRpe = new XmlRpcOdoo("https://adm.marinozzi.com.ar/xmlrpc/2/object","admin","rf52*/rf","prod_v8",1);
-        String[] filtro = new String[]{"phone","=","+54 3492 431017"};
-        ArrayList<Object> result = xmlRpe.listRecords(filtro,"res.partner");
-        Log.e("HOLAAAA",String.valueOf(idResult));
+        FiltrosParaOdoo filtro = new FiltrosParaOdoo(1);
+        filtro.addFiltro(0,"partner_id","like","Centro");
+        filtro.addCampos("number");
+        filtro.addCampos("amount_total");
+        filtro.addCampos("state");
+
+        OdooBaseDatosInvoices xmlRpe = new OdooBaseDatosInvoices("",
+                "","","",1);
+        xmlRpe.selectModel(2);
+        xmlRpe.setFiltros(filtro.getFiltro());
+        xmlRpe.setMapeoCampos(filtro.getMapeoCampos());
+        xmlRpe.execute();
+        try {
+            for(int i = 0; i<xmlRpe.get().length;i++){
+                Log.e("ERRRORRRRRR1",String.valueOf(xmlRpe.get()[i]));
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
     }
 
     protected void logeo(String user, String password){
