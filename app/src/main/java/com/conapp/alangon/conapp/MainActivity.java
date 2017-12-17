@@ -48,9 +48,6 @@ public class MainActivity extends AppCompatActivity {
         });
         FiltrosParaOdoo filtro = new FiltrosParaOdoo(1);
         filtro.addFiltro(0,"partner_id","like","Centro");
-        filtro.addCampos("number");
-        filtro.addCampos("amount_total");
-        filtro.addCampos("state");
 
         OdooBaseDatosInvoices xmlRpe = new OdooBaseDatosInvoices("",
                 "","","",1);
