@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.conapp.alangon.conapp.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Alan Gon on 12/12/2017.
@@ -20,19 +21,18 @@ import java.util.ArrayList;
 
 public class VistaListaPersonalizada extends BaseAdapter {
     Context ctx;
-    ArrayList<String> odooInvoices;
+    Object[] odooInvoices;
     private static LayoutInflater inflate;
     String[] testeo;
-    public VistaListaPersonalizada(Context ctx, ArrayList<String> odooInvoices) {
+    public VistaListaPersonalizada(Context ctx, Object[] odooInvoices) {
         this.odooInvoices = odooInvoices;
         this.ctx = ctx;
-        this.testeo = testeo;
         inflate = (LayoutInflater) ctx.getSystemService(ctx.LAYOUT_INFLATER_SERVICE);
     }
 
     @Override
     public int getCount() {
-        return testeo.length;
+        return odooInvoices.length;
     }
 
     @Override
@@ -56,10 +56,11 @@ public class VistaListaPersonalizada extends BaseAdapter {
                 view.findViewById(R.id.textViewFechaListaPersonalizada);
         TextView textViewMontoFactura = (TextView)
                 view.findViewById(R.id.textViewMontoListaPersonalizada);
+        HashMap<String,Object> mapeoResult = new HashMap<>();
 
-        textViewFechaFactura.setText("22/15/17");
-        textViewNombreFactura.setText("Factura 0005-00000034/FVA");
-        textViewMontoFactura.setText("1500000");
+        textViewFechaFactura.setText("ASDASD");
+        textViewNombreFactura.setText(mapeoResult.get("number").toString());
+        textViewMontoFactura.setText(mapeoResult.get("amount_total").toString());
 
         //sets the text for item name and item description from the current item object
 //        textViewItemName.setText(currentItem.getItemName());

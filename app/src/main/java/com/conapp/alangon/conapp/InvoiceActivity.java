@@ -18,6 +18,7 @@ import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class InvoiceActivity extends AppCompatActivity {
@@ -36,9 +37,29 @@ public class InvoiceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invoice);
         listView = (ListView) findViewById(R.id.listViewInvoices);
+        FiltrosParaOdoo filtrosOdoo = new FiltrosParaOdoo(1);
+        filtrosOdoo.addFiltro(0,"number","like","0001");
+        filtrosOdoo.setCampos(2);
+        OdooBaseDatosInvoices invoicesOdoo = new OdooBaseDatosInvoices(this,
+                "http://192.168.0.244:8069/xmlrpc/2/object",
+                "pruebasOdoo2","admin","admin",1);
+        invoicesOdoo.selectModel(2);
+        invoicesOdoo.setMapeoCampos(filtrosOdoo.getMapeoCampos());
+        invoicesOdoo.setFiltros(filtrosOdoo.getFiltro());
+        invoicesOdoo.execute();
+        try{
+            Log.e("EASADASD",invoicesOdoo.get()[0].toString());
 
-        //VistaListaPersonalizada listaFacturasOdoo = new VistaListaPersonalizada(this,test);
-        //listView.setAdapter(listaFacturasOdoo);
+        VistaListaPersonalizada listaFacturasOdoo = new VistaListaPersonalizada(this,invoicesOdoo.get());
+
+        listView.setAdapter(listaFacturasOdoo);
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
