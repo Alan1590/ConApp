@@ -11,12 +11,14 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 
 import com.conapp.alangon.basedatos.modelo.OdooBaseDatosInvoices;
+import com.conapp.alangon.personalizaciones.FiltrosParaOdoo;
 import com.conapp.alangon.personalizaciones.VistaListaPersonalizada;
 
 import org.w3c.dom.Text;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class InvoiceActivity extends AppCompatActivity {
     /*************LISTA VARIABLES******************/
@@ -33,11 +35,10 @@ public class InvoiceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_invoice);
-        String[] test = {"HOLa","QTES","ADSACVX","asdzxc"};
-
         listView = (ListView) findViewById(R.id.listViewInvoices);
-        VistaListaPersonalizada listaFacturasOdoo = new VistaListaPersonalizada(this,test);
-        listView.setAdapter(listaFacturasOdoo);
+
+        //VistaListaPersonalizada listaFacturasOdoo = new VistaListaPersonalizada(this,test);
+        //listView.setAdapter(listaFacturasOdoo);
     }
 
 }

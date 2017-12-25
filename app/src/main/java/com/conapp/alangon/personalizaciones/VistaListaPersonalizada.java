@@ -12,16 +12,19 @@ import android.widget.TextView;
 
 import com.conapp.alangon.conapp.R;
 
+import java.util.ArrayList;
+
 /**
  * Created by Alan Gon on 12/12/2017.
  */
 
 public class VistaListaPersonalizada extends BaseAdapter {
     Context ctx;
-    ArrayAdapter<String> odooInvoices;
+    ArrayList<String> odooInvoices;
     private static LayoutInflater inflate;
     String[] testeo;
-    public VistaListaPersonalizada(Context ctx, String[] testeo) {
+    public VistaListaPersonalizada(Context ctx, ArrayList<String> odooInvoices) {
+        this.odooInvoices = odooInvoices;
         this.ctx = ctx;
         this.testeo = testeo;
         inflate = (LayoutInflater) ctx.getSystemService(ctx.LAYOUT_INFLATER_SERVICE);
@@ -53,6 +56,7 @@ public class VistaListaPersonalizada extends BaseAdapter {
                 view.findViewById(R.id.textViewFechaListaPersonalizada);
         TextView textViewMontoFactura = (TextView)
                 view.findViewById(R.id.textViewMontoListaPersonalizada);
+
         textViewFechaFactura.setText("22/15/17");
         textViewNombreFactura.setText("Factura 0005-00000034/FVA");
         textViewMontoFactura.setText("1500000");

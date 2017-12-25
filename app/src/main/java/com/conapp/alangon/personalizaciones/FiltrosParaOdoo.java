@@ -58,8 +58,15 @@ public class FiltrosParaOdoo {
         listadoFiltro[numeroFiltro].add(operador);
         listadoFiltro[numeroFiltro].add(condicion);
     }
-
-    public void addCampos(int seleccion_modelo){
+    /**
+     * Metodo para seleccionar que campos son los que se van a utilizar, segun el modelo
+     *
+     * MODELO: 0 - MODELO PARTNER
+     * MODELO: 1 - MODELO PAGOS
+     * MODELO: 2 - MODELO FACTURAS
+     * @param seleccion_modelo
+     */
+    public void setCampos(int seleccion_modelo){
         switch(seleccion_modelo){
             case(0):
                 listadoCampos.add(CAMPO_PARTNER_NAME);
@@ -80,7 +87,6 @@ public class FiltrosParaOdoo {
                 listadoCampos.add(CAMPO_INVOICE_NUMBER);
                 listadoCampos.add(CAMPO_INVOICE_DATE);
                 listadoCampos.add(CAMPO_INVOICE_COMMENT);
-
         }
 
     }

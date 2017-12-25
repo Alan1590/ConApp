@@ -1,6 +1,7 @@
 package com.conapp.alangon.basedatos.modelo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -9,6 +10,7 @@ import com.conapp.alangon.Odoo.axmlrpc.XMLRPCClient;
 import com.conapp.alangon.Odoo.axmlrpc.XMLRPCException;
 import com.conapp.alangon.conapp.InvoiceActivity;
 import com.conapp.alangon.conapp.MainActivity;
+import com.conapp.alangon.personalizaciones.ClaseDialogos;
 import com.conapp.alangon.personalizaciones.FiltrosParaOdoo;
 
 import java.net.MalformedURLException;
@@ -33,7 +35,11 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, String, Object[]>{
     private int idUsuarioOdoo;
     private ArrayList<String>[] filtros ;
     private HashMap<String,ArrayList<String>> mapeoCampos;
+
+    private ClaseDialogos dialogos;
+    private Context ctx;
     /*************LISTA VARIABLES******************/
+
 
     /**
      * Metodo para seleccionar que modelo es el que se esta trabajando
@@ -86,7 +92,9 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, String, Object[]>{
      * @param pass
      * @param idUsuarioOdoo
      */
-    public OdooBaseDatosInvoices(String urlServidorOdoo, String baseDatos, String usuario, String pass, int idUsuarioOdoo) {
+    public OdooBaseDatosInvoices(Context ctx, String urlServidorOdoo,
+                                 String baseDatos, String usuario, String pass, int idUsuarioOdoo) {
+        this.ctx = ctx;
         this.urlServidorOdoo = urlServidorOdoo;
         this.baseDatos = baseDatos;
         this.usuario = usuario;
@@ -97,27 +105,40 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, String, Object[]>{
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        dialogos = new ClaseDialogos(ctx);
     }
 
     @Override
     protected Object[] doInBackground(String... strings) {
         Object[] result=null;
         try{
+
             client = new XMLRPCClient(new URL(urlServidorOdoo), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
+
             result = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
                 modelo_seleccionado,"search_read",
                 Arrays.asList(Arrays.asList(filtros)),mapeoCampos);
-        } catch (XMLRPCException e) {
-            Log.e("ERRRORRRRRR1",String.valueOf(e.getMessage()));
+
         } catch (Exception e) {
-            Log.e("ERRRORRRRRR2",String.valueOf(e.getMessage()));        }
+            Log.e("HOLAs",e.getMessage());
+
+            dialogos.mensajeError("Se ah producido un error", e.getMessage());
+        }
         return result;
 
     }
 
     @Override
+    protected void onProgressUpdate(String... values) {
+        super.onProgressUpdate(values);
+        Log.e("HOLAs",values.toString());
+    }
+
+    @Override
     protected void onPostExecute(Object[] objects) {
         super.onPostExecute(objects);
+
+
     }
 
 }

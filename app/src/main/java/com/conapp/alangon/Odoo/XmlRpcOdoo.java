@@ -63,7 +63,6 @@ public class XmlRpcOdoo {
         this.idUsuarioOdoo = idUsuarioOdoo;
         try{
             client = new XMLRPCClient(new URL(urlServidorOdoo), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
-
         }catch (MalformedURLException urlEx){
 
         }

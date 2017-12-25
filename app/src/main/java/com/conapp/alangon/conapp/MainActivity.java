@@ -17,6 +17,7 @@ import com.conapp.alangon.personalizaciones.FiltrosParaOdoo;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,10 +28,29 @@ public class MainActivity extends AppCompatActivity {
 
     public void setIdResult(String idResult) {
         this.idResult = idResult;
-        Log.e("RRRRRRRRRRsss",String.valueOf(idResult));
-
-
     }
+
+    /**
+     *         FiltrosParaOdoo filtro = new FiltrosParaOdoo(1);
+     filtro.addFiltro(0,"partner_id","like","Centro");
+
+     OdooBaseDatosInvoices xmlRpe = new OdooBaseDatosInvoices("",
+     "","","",1);
+     xmlRpe.selectModel(2);
+     xmlRpe.setFiltros(filtro.getFiltro());
+     xmlRpe.setMapeoCampos(filtro.getMapeoCampos());
+     xmlRpe.execute();
+     try {
+     for(int i = 0; i<xmlRpe.get().length;i++){
+     Log.e("ERRRORRRRRR1",String.valueOf(xmlRpe.get()[i]));
+     }
+     } catch (InterruptedException e) {
+     e.printStackTrace();
+     } catch (ExecutionException e) {
+     e.printStackTrace();
+     }
+     * @param savedInstanceState
+     */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,25 +66,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-        FiltrosParaOdoo filtro = new FiltrosParaOdoo(1);
-        filtro.addFiltro(0,"partner_id","like","Centro");
-
-        OdooBaseDatosInvoices xmlRpe = new OdooBaseDatosInvoices("",
-                "","","",1);
-        xmlRpe.selectModel(2);
-        xmlRpe.setFiltros(filtro.getFiltro());
-        xmlRpe.setMapeoCampos(filtro.getMapeoCampos());
-        xmlRpe.execute();
+        FiltrosParaOdoo filtrosOdoo = new FiltrosParaOdoo(1);
+        filtrosOdoo.addFiltro(0,"number","like","0001");
+        filtrosOdoo.setCampos(2);
+        OdooBaseDatosInvoices invoicesOdoo = new OdooBaseDatosInvoices(this,
+                "http://192.168.0.244:8069/xmlrpc/2/object",
+                "pruebasOdoo2","admin","admin",1);
+        invoicesOdoo.selectModel(2);
+        invoicesOdoo.setMapeoCampos(filtrosOdoo.getMapeoCampos());
+        invoicesOdoo.setFiltros(filtrosOdoo.getFiltro());
+        invoicesOdoo.execute();
+        HashMap<String,Object> mapeoResult = new HashMap<>();
         try {
-            for(int i = 0; i<xmlRpe.get().length;i++){
-                Log.e("ERRRORRRRRR1",String.valueOf(xmlRpe.get()[i]));
+            for(int i =0;i<invoicesOdoo.get().length;i++){
+                mapeoResult.putAll((HashMap<String,Object>) invoicesOdoo.get()[i]);
             }
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (ExecutionException e) {
             e.printStackTrace();
         }
-
     }
 
     protected void logeo(String user, String password){

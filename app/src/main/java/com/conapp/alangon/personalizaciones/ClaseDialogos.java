@@ -14,6 +14,7 @@ import android.view.View;
 public class ClaseDialogos extends AppCompatActivity {
     private Context ctx;
     private ProgressDialog dialogoProgreso;
+    private boolean hayError;
     public ClaseDialogos(Context ctx) {
         this.ctx = ctx;
         dialogoProgreso = new ProgressDialog(ctx);
@@ -34,7 +35,7 @@ public class ClaseDialogos extends AppCompatActivity {
         builder.setMessage(error).setPositiveButton("Ok",new DialogInterface.OnClickListener(){
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-
+                hayError = true;
             }
         }).create().show();
     }
