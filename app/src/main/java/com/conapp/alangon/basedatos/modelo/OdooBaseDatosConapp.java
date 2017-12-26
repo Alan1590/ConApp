@@ -1,14 +1,19 @@
 package com.conapp.alangon.basedatos.modelo;
 
+import java.util.HashMap;
+
 /**
  * Created by AlanMSI on 9/11/2017.
  */
 
 public class OdooBaseDatosConapp {
-    private int idOdoo;
-    private String urlOdoo;
-    private String odooUser;
-    private String odooPass;
-    private String odooURL;
+    private static HashMap<String, Object> mapeoResultado;
 
+    public static HashMap<String, Object> getMapeoResultado() {
+        return mapeoResultado;
+    }
+
+    public static void setMapeoResultado(HashMap<String, Object> mapeoResultado) {
+        OdooBaseDatosConapp.mapeoResultado = mapeoResultado;
+    }
 }

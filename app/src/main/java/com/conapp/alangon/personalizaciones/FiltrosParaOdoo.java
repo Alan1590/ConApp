@@ -19,6 +19,7 @@ public class FiltrosParaOdoo {
     private final String CAMPO_INVOICE_NUMBER = "number";
     private final String CAMPO_INVOICE_DATE = "date_invoice";
     private final String CAMPO_INVOICE_COMMENT = "comment";
+    private final String CAMPO_INVOICE_STATE = "state";
 
     /******LISTADO CAMPOS PARTNER******/
     private final String CAMPO_PARTNER_NAME = "name";
@@ -26,8 +27,8 @@ public class FiltrosParaOdoo {
     private final String CAMPO_PARTNER_MOBILE = "mobile";
     private final String CAMPO_PARTNER_EMAIL = "email";
     private final String CAMPO_PARTNER_STREET = "street";
-    private final String CAMPO_INVOICE_CITY = "city";
-    private final String CAMPO_INVOICE_STATE = "state_id";
+    private final String CAMPO_PARTNER_CITY = "city";
+    private final String CAMPO_PARTNER_STATE = "state_id";
 
     /******LISTADO CAMPOS PAGOS******/
     private final String CAMPO_PAGOS_NUMBER = "number";
@@ -74,8 +75,8 @@ public class FiltrosParaOdoo {
                 listadoCampos.add(CAMPO_PARTNER_MOBILE);
                 listadoCampos.add(CAMPO_PARTNER_EMAIL);
                 listadoCampos.add(CAMPO_PARTNER_STREET);
-                listadoCampos.add(CAMPO_INVOICE_CITY);
-                listadoCampos.add(CAMPO_INVOICE_STATE);
+                listadoCampos.add(CAMPO_PARTNER_CITY);
+                listadoCampos.add(CAMPO_PARTNER_STATE);
             case(1):
                 listadoCampos.add(CAMPO_PAGOS_NUMBER);
                 listadoCampos.add(CAMPO_PAGOS_TOTAL);
@@ -87,6 +88,7 @@ public class FiltrosParaOdoo {
                 listadoCampos.add(CAMPO_INVOICE_NUMBER);
                 listadoCampos.add(CAMPO_INVOICE_DATE);
                 listadoCampos.add(CAMPO_INVOICE_COMMENT);
+                listadoCampos.add(CAMPO_INVOICE_STATE);
         }
 
     }

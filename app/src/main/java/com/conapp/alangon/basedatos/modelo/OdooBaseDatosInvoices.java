@@ -24,7 +24,7 @@ import java.util.List;
  * Created by Alan Gon on 12/12/2017.
  */
 
-public class OdooBaseDatosInvoices extends AsyncTask<String, String, Object[]>{
+public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
     /*************LISTA VARIABLES******************/
     private XMLRPCClient client;
     private static final String MODELO_PARTNER = "res.partner";
@@ -100,28 +100,27 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, String, Object[]>{
         this.usuario = usuario;
         this.pass = pass;
         this.idUsuarioOdoo = idUsuarioOdoo;
+        dialogos = new ClaseDialogos(ctx);
+
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        dialogos = new ClaseDialogos(ctx);
     }
 
     @Override
     protected Object[] doInBackground(String... strings) {
         Object[] result=null;
-        try{
 
+        try{
             client = new XMLRPCClient(new URL(urlServidorOdoo), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
 
             result = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
                 modelo_seleccionado,"search_read",
                 Arrays.asList(Arrays.asList(filtros)),mapeoCampos);
-
+            publishProgress(result);
         } catch (Exception e) {
-            Log.e("HOLAs",e.getMessage());
-
             dialogos.mensajeError("Se ah producido un error", e.getMessage());
         }
         return result;
@@ -129,16 +128,15 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, String, Object[]>{
     }
 
     @Override
-    protected void onProgressUpdate(String... values) {
+    protected void onProgressUpdate(Object... values) {
         super.onProgressUpdate(values);
-        Log.e("HOLAs",values.toString());
+        dialogos.progresoDialogo("Cargando", "Recuperando facturas, aguarde");
     }
 
     @Override
     protected void onPostExecute(Object[] objects) {
         super.onPostExecute(objects);
-
-
+        dialogos.cerrarProgresoDialogo();
     }
 
 }

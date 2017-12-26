@@ -23,7 +23,8 @@ public class ClaseDialogos extends AppCompatActivity {
     public void progresoDialogo(String titulo, String mensaje){
         dialogoProgreso.setTitle(titulo);
         dialogoProgreso.setMessage(mensaje);
-        dialogoProgreso.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+
+        dialogoProgreso.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         dialogoProgreso.show();
     }
 

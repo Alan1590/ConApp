@@ -1,6 +1,7 @@
 package com.conapp.alangon.personalizaciones;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.conapp.alangon.conapp.R;
@@ -24,9 +26,12 @@ public class VistaListaPersonalizada extends BaseAdapter {
     Object[] odooInvoices;
     private static LayoutInflater inflate;
     String[] testeo;
+    private ClaseDialogos dialogos;
     public VistaListaPersonalizada(Context ctx, Object[] odooInvoices) {
         this.odooInvoices = odooInvoices;
         this.ctx = ctx;
+        dialogos = new ClaseDialogos(ctx);
+        dialogos.progresoDialogo("Cargando","Cargando facturas, aguarde");
         inflate = (LayoutInflater) ctx.getSystemService(ctx.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -37,7 +42,7 @@ public class VistaListaPersonalizada extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
-        return null;
+        return odooInvoices[i];
     }
 
     @Override
@@ -56,17 +61,38 @@ public class VistaListaPersonalizada extends BaseAdapter {
                 view.findViewById(R.id.textViewFechaListaPersonalizada);
         TextView textViewMontoFactura = (TextView)
                 view.findViewById(R.id.textViewMontoListaPersonalizada);
-        HashMap<String,Object> mapeoResult = new HashMap<>();
+        TextView textViewEstado = (TextView)
+                view.findViewById(R.id.textViewPagadoListaPersonalizada);
+        HashMap<String,Object> mapeoResultado = new HashMap<>();
+        mapeoResultado.putAll((HashMap<String,Object>) getItem(i));
+        textViewFechaFactura.setText(mapeoResultado.get("date_invoice").toString());
+        textViewNombreFactura.setText(mapeoResultado.get("number").toString());
+        textViewMontoFactura.setText(mapeoResultado.get("amount_total").toString());
+        switch(mapeoResultado.get("state").toString()){
+            case("draft"):
+                textViewEstado.setText("Borrador");
+                view.setBackgroundColor(Color.GRAY);
+                break;
+            case("open"):
+                textViewEstado.setText("Abierto");
+                break;
+            case("cancelled"):
+                textViewEstado.setText("Cancelada");
+                view.setBackgroundColor(Color.GRAY);
+                break;
+            case("paid"):
+                textViewEstado.setText("Pagado");
+                view.setBackgroundColor(Color.GREEN);
+                break;
 
-        textViewFechaFactura.setText("ASDASD");
-        textViewNombreFactura.setText(mapeoResult.get("number").toString());
-        textViewMontoFactura.setText(mapeoResult.get("amount_total").toString());
+        }
 
         //sets the text for item name and item description from the current item object
 //        textViewItemName.setText(currentItem.getItemName());
 //        textViewItemDescription.setText(currentItem.getItemDescription());
 
         // returns the view for the current row
+        dialogos.cerrarProgresoDialogo();
         return view;
     }
 
