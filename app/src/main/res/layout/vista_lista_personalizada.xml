@@ -39,6 +39,7 @@
         android:gravity="center_horizontal"
         android:text="0.00"
         android:textAlignment="textEnd"
+        android:textColor="@android:color/black"
         android:textSize="9sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintEnd_toEndOf="parent"
@@ -59,6 +60,7 @@
         android:gravity="left"
         android:text="15/20/2017"
         android:textAlignment="center"
+        android:textColor="@android:color/black"
         android:textSize="10sp"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintStart_toStartOf="parent"
@@ -76,6 +78,7 @@
         android:fontFamily="monospace"
         android:gravity="right"
         android:text="FV"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
@@ -98,9 +101,22 @@
         android:text="Pagado"
         android:textAlignment="center"
         android:textSize="8sp"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/guideline2"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+    <TextView
+        android:id="@+id/textViewIdListaPersonalizada"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:textSize="8sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </android.support.constraint.ConstraintLayout>

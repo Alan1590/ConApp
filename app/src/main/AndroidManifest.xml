@@ -25,6 +25,10 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ActividadPrincipal" />
         <activity android:name=".InvoiceActivity" />
+        <activity
+            android:name=".ActivityVerFacturas"
+            android:label="@string/title_activity_ver_facturas"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

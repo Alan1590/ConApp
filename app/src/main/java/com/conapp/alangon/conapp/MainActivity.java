@@ -75,10 +75,10 @@ public class MainActivity extends AppCompatActivity {
     protected void logeo(String user, String password){
         TrabajoBaseDatosLogeoUsuario logeoUsuario = new TrabajoBaseDatosLogeoUsuario(this);
         logeoUsuario.execute(user,password, getDeviceId());
+
         try{
-            boolean logeado = logeoUsuario.get();
-            if(logeado){
-            }
+            HashMap<String, String> mapeoCampos = new HashMap<>();
+            mapeoCampos.putAll(logeoUsuario.get());
             Intent intLogeo = new Intent(this, ActividadPrincipal.class);
             startActivity(intLogeo);
 

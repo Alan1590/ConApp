@@ -1,9 +1,11 @@
 package com.conapp.alangon.basedatos.modelo;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ListView;
 
 import com.conapp.alangon.Odoo.axmlrpc.XMLRPCCallback;
 import com.conapp.alangon.Odoo.axmlrpc.XMLRPCClient;
@@ -12,6 +14,7 @@ import com.conapp.alangon.conapp.InvoiceActivity;
 import com.conapp.alangon.conapp.MainActivity;
 import com.conapp.alangon.personalizaciones.ClaseDialogos;
 import com.conapp.alangon.personalizaciones.FiltrosParaOdoo;
+import com.conapp.alangon.personalizaciones.VistaListaPersonalizada;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,11 +38,16 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
     private int idUsuarioOdoo;
     private ArrayList<String>[] filtros ;
     private HashMap<String,ArrayList<String>> mapeoCampos;
-
+    private HashMap<String,String>[] mapeoResultado;
     private ClaseDialogos dialogos;
+    private ListView listView;
     private Context ctx;
+    private VistaListaPersonalizada listaFacturasOdoo;
     /*************LISTA VARIABLES******************/
 
+    public void setListView(ListView listView) {
+        this.listView = listView;
+    }
 
     /**
      * Metodo para seleccionar que modelo es el que se esta trabajando
@@ -107,12 +115,13 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        dialogos.mostrarProgresoDialogo();
+        dialogos.progresoDialogo("Cargando","Cargando facturas, aguarde");
     }
 
     @Override
     protected Object[] doInBackground(String... strings) {
         Object[] result=null;
-
         try{
             client = new XMLRPCClient(new URL(urlServidorOdoo), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
 
@@ -121,7 +130,7 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
                 Arrays.asList(Arrays.asList(filtros)),mapeoCampos);
             publishProgress(result);
         } catch (Exception e) {
-            dialogos.mensajeError("Se ah producido un error", e.getMessage());
+
         }
         return result;
 
@@ -130,12 +139,20 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
     @Override
     protected void onProgressUpdate(Object... values) {
         super.onProgressUpdate(values);
-        dialogos.progresoDialogo("Cargando", "Recuperando facturas, aguarde");
+        mapeoResultado = new HashMap[values.length];
+        for(int i=0;i<values.length;i++){
+            mapeoResultado[i] = new HashMap<>();
+            mapeoResultado[i].putAll((HashMap<String,String>) values[i]);
+            Log.e("ERSDXCXCSD",mapeoResultado[i].toString());
+        }
     }
 
     @Override
     protected void onPostExecute(Object[] objects) {
         super.onPostExecute(objects);
+        HashMapOdooInvoices.setResultadoInvoices(mapeoResultado);
+        listaFacturasOdoo = new VistaListaPersonalizada(ctx,objects);
+        listView.setAdapter(listaFacturasOdoo);
         dialogos.cerrarProgresoDialogo();
     }
 

@@ -17,6 +17,7 @@ public class FiltrosParaOdoo {
     /******LISTADO CAMPOS INVOICE******/
     private final String CAMPO_INVOICE_AMOUNT = "amount_total";
     private final String CAMPO_INVOICE_NUMBER = "number";
+    private final String CAMPO_INVOICE_PARTNER = "partner_id";
     private final String CAMPO_INVOICE_DATE = "date_invoice";
     private final String CAMPO_INVOICE_COMMENT = "comment";
     private final String CAMPO_INVOICE_STATE = "state";
@@ -86,6 +87,7 @@ public class FiltrosParaOdoo {
             case(2):
                 listadoCampos.add(CAMPO_INVOICE_AMOUNT);
                 listadoCampos.add(CAMPO_INVOICE_NUMBER);
+                listadoCampos.add(CAMPO_INVOICE_PARTNER);
                 listadoCampos.add(CAMPO_INVOICE_DATE);
                 listadoCampos.add(CAMPO_INVOICE_COMMENT);
                 listadoCampos.add(CAMPO_INVOICE_STATE);

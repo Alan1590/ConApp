@@ -1,6 +1,8 @@
 package com.conapp.alangon.personalizaciones;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.BaseAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.conapp.alangon.conapp.ActivityVerFacturas;
 import com.conapp.alangon.conapp.R;
 
 import java.util.ArrayList;
@@ -21,18 +24,18 @@ import java.util.HashMap;
  * Created by Alan Gon on 12/12/2017.
  */
 
-public class VistaListaPersonalizada extends BaseAdapter {
+public class VistaListaPersonalizada extends BaseAdapter{
     Context ctx;
     Object[] odooInvoices;
     private static LayoutInflater inflate;
-    String[] testeo;
     private ClaseDialogos dialogos;
+    private HashMap<String,Object> mapeoResultado;
     public VistaListaPersonalizada(Context ctx, Object[] odooInvoices) {
         this.odooInvoices = odooInvoices;
         this.ctx = ctx;
-        dialogos = new ClaseDialogos(ctx);
-        dialogos.progresoDialogo("Cargando","Cargando facturas, aguarde");
         inflate = (LayoutInflater) ctx.getSystemService(ctx.LAYOUT_INFLATER_SERVICE);
+        ClaseDialogos dialogos = new ClaseDialogos(ctx);
+        mapeoResultado = new HashMap<>();
     }
 
     @Override
@@ -42,29 +45,34 @@ public class VistaListaPersonalizada extends BaseAdapter {
 
     @Override
     public Object getItem(int i) {
+
         return odooInvoices[i];
     }
 
     @Override
     public long getItemId(int i) {
-        return 0;
+        return i;
     }
 
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         // inflate the layout for each list row
+
         view = inflate.inflate(R.layout.vista_lista_personalizada, null);
         // get the TextView for item name and item description
         TextView textViewNombreFactura = (TextView)
                 view.findViewById(R.id.textViewNombreFacturaListaPersonalizada);
+        TextView textViewIdFactura = (TextView)
+                view.findViewById(R.id.textViewIdListaPersonalizada);
         TextView textViewFechaFactura = (TextView)
                 view.findViewById(R.id.textViewFechaListaPersonalizada);
         TextView textViewMontoFactura = (TextView)
                 view.findViewById(R.id.textViewMontoListaPersonalizada);
         TextView textViewEstado = (TextView)
                 view.findViewById(R.id.textViewPagadoListaPersonalizada);
-        HashMap<String,Object> mapeoResultado = new HashMap<>();
+
         mapeoResultado.putAll((HashMap<String,Object>) getItem(i));
+        textViewIdFactura.setText(String.valueOf(i));
         textViewFechaFactura.setText(mapeoResultado.get("date_invoice").toString());
         textViewNombreFactura.setText(mapeoResultado.get("number").toString());
         textViewMontoFactura.setText(mapeoResultado.get("amount_total").toString());
@@ -87,12 +95,6 @@ public class VistaListaPersonalizada extends BaseAdapter {
 
         }
 
-        //sets the text for item name and item description from the current item object
-//        textViewItemName.setText(currentItem.getItemName());
-//        textViewItemDescription.setText(currentItem.getItemDescription());
-
-        // returns the view for the current row
-        dialogos.cerrarProgresoDialogo();
         return view;
     }
 
@@ -101,4 +103,5 @@ public class VistaListaPersonalizada extends BaseAdapter {
     public CharSequence[] getAutofillOptions() {
         return new CharSequence[0];
     }
+
 }

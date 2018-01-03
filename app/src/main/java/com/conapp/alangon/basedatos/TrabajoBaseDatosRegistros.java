@@ -1,10 +1,13 @@
 package com.conapp.alangon.basedatos;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
+import com.conapp.alangon.basedatos.modelo.HashMapDatosConapp;
 import com.conapp.alangon.personalizaciones.ClaseDialogos;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -30,27 +33,29 @@ public class TrabajoBaseDatosRegistros extends AsyncTask<String, String, HashMap
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+        conectarALaBaseDatos();
     }
 
     @Override
     protected HashMap<String, String> doInBackground(String... strings) {
         HashMap<String, String> mapeoResultado = new HashMap<>();
-        mapeoResultado = getResultados(strings, 1);
-
+        mapeoResultado = getResultados(strings);
         return mapeoResultado;
     }
 
     @Override
     protected void onProgressUpdate(String... values) {
         super.onProgressUpdate(values);
+        dialogos.progresoDialogo("Cargando datos", "Cargando");
     }
 
     @Override
     protected void onPostExecute(HashMap<String, String> stringStringHashMap) {
         super.onPostExecute(stringStringHashMap);
+        dialogos.cerrarProgresoDialogo();
     }
 
-    private HashMap<String, String> getResultados(String[] datosLogeo, int id){
+    private HashMap<String, String> getResultados(String[] datosLogeo){
         HashMap<String, String> getCampos = new HashMap<>();
         try {
             pstm = conn.prepareStatement("Select * from public.users where user_user = ? and user_password = ? and user_imei=?");
@@ -76,9 +81,27 @@ public class TrabajoBaseDatosRegistros extends AsyncTask<String, String, HashMap
                 break;
             }
         } catch (SQLException eq) {
-            hayFallas = true;
-            errores=eq.getMessage();
+            getCampos.put("Error",eq.getMessage());
         }
         return getCampos;
+    }
+    /**
+     * Funcion que se va a llamar siempre para la conexion a la base de datos
+     */
+    private boolean conectarALaBaseDatos() {
+        boolean conectado;
+        try {
+            Class.forName("org.postgresql.Driver");
+            // "jdbc:postgresql://IP:PUERTO/DB", "USER", "PASSWORD");
+
+            conn = DriverManager.getConnection(
+                    "jdbc:postgresql://mvbox.ddns.net/conapp", "conapp", "C0n@pp#2017AWG");
+            conectado=true;
+        } catch (SQLException | ClassNotFoundException e) {
+            hayFallas = true;
+            conectado=false;
+            errores=e.getMessage();
+        }
+        return conectado;
     }
 }
