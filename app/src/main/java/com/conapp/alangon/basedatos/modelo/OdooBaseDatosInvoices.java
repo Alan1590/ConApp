@@ -37,11 +37,15 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
     private String urlServidorOdoo, baseDatos, usuario, pass;
     private int idUsuarioOdoo;
     private ArrayList<String>[] filtros ;
+    private ArrayList<Object[]> partnerResult;
     private HashMap<String,ArrayList<String>> mapeoCampos;
-    private HashMap<String,String>[] mapeoResultado;
+    private HashMap<String,ArrayList<String>> mapeoPartner;
+    private HashMap<String,String>[] mapeoResultadoInvoices;
+    private HashMap<String,String>[] mapeoResultadoPartner;
     private ClaseDialogos dialogos;
     private ListView listView;
     private Context ctx;
+
     private VistaListaPersonalizada listaFacturasOdoo;
     /*************LISTA VARIABLES******************/
 
@@ -109,7 +113,7 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
         this.pass = pass;
         this.idUsuarioOdoo = idUsuarioOdoo;
         dialogos = new ClaseDialogos(ctx);
-
+        mapeoPartner = new HashMap<>();
     }
 
     @Override
@@ -121,36 +125,46 @@ public class OdooBaseDatosInvoices extends AsyncTask<String, Object, Object[]>{
 
     @Override
     protected Object[] doInBackground(String... strings) {
-        Object[] result=null;
+        Object[] resultadoConsultaPartner=null;
+        Object[] resultadoConsultaInvoice=null;
+
+        ArrayList<String> partner_id = new ArrayList<>();
+        partner_id.add("name");
+        mapeoPartner.put("fields",partner_id);
         try{
             client = new XMLRPCClient(new URL(urlServidorOdoo), XMLRPCClient.FLAGS_SSL_IGNORE_INVALID_CERT);
-
-            result = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
+            resultadoConsultaInvoice = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
                 modelo_seleccionado,"search_read",
                 Arrays.asList(Arrays.asList(filtros)),mapeoCampos);
-            publishProgress(result);
+            resultadoConsultaPartner = (Object[]) client.call("execute_kw",baseDatos,idUsuarioOdoo,pass,
+                    "res.partner","search_read",
+                    Arrays.asList(Arrays.asList(filtros)),mapeoPartner);
+            partnerResult = new ArrayList<>();
+            partnerResult.add(resultadoConsultaPartner);
+            HashMapOdooPartner.setNombre(partnerResult.get(0)[0]);
+            publishProgress(resultadoConsultaInvoice);
         } catch (Exception e) {
 
         }
-        return result;
+        return resultadoConsultaInvoice;
 
     }
 
     @Override
     protected void onProgressUpdate(Object... values) {
         super.onProgressUpdate(values);
-        mapeoResultado = new HashMap[values.length];
+        mapeoResultadoInvoices = new HashMap[values.length];
         for(int i=0;i<values.length;i++){
-            mapeoResultado[i] = new HashMap<>();
-            mapeoResultado[i].putAll((HashMap<String,String>) values[i]);
-            Log.e("ERSDXCXCSD",mapeoResultado[i].toString());
+            mapeoResultadoInvoices[i] = new HashMap<>();
+            mapeoResultadoInvoices[i].putAll((HashMap<String,String>) values[i]);
         }
+
     }
 
     @Override
     protected void onPostExecute(Object[] objects) {
         super.onPostExecute(objects);
-        HashMapOdooInvoices.setResultadoInvoices(mapeoResultado);
+        HashMapOdooInvoices.setResultadoInvoices(mapeoResultadoInvoices);
         listaFacturasOdoo = new VistaListaPersonalizada(ctx,objects);
         listView.setAdapter(listaFacturasOdoo);
         dialogos.cerrarProgresoDialogo();

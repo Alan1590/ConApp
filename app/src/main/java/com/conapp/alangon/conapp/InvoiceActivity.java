@@ -50,7 +50,7 @@ public class InvoiceActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.listViewInvoices);
 
         FiltrosParaOdoo filtrosOdoo = new FiltrosParaOdoo(1);
-        filtrosOdoo.addFiltro(0,"number","like","");
+        filtrosOdoo.addFiltro(0,"comment","like","");
         filtrosOdoo.setCampos(2);
         invoicesOdoo = new OdooBaseDatosInvoices(this,
                 "http://192.168.0.244:8069/xmlrpc/2/object",

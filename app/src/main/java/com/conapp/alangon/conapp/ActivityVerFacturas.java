@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.conapp.alangon.basedatos.modelo.HashMapOdooInvoices;
+import com.conapp.alangon.basedatos.modelo.HashMapOdooPartner;
 
 import org.w3c.dom.Text;
 
@@ -41,12 +42,11 @@ public class ActivityVerFacturas extends AppCompatActivity {
                 findViewById(R.id.textViewPartnerVerFactura);
         TextView textViewMontoFactura = (TextView)
                 findViewById(R.id.textViewMontoVerFactura);
-
         textViewNombreFactura.setText(HashMapOdooInvoices.getResultadoInvoices()[idFactura].get("number"));
         textViewFechaFactura.setText(HashMapOdooInvoices.getResultadoInvoices()[idFactura].get("date_invoice"));
         textViewDescripcionFactura.setText(String.valueOf(HashMapOdooInvoices.getResultadoInvoices()[idFactura].get("comment")));
         textViewMontoFactura.setText(String.valueOf(HashMapOdooInvoices.getResultadoInvoices()[idFactura].get("amount_total")));
-        Object[] partner = new Object[2];
+        textViewPartnerFactura.setText(HashMapOdooPartner.getNombre());
         /*
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
